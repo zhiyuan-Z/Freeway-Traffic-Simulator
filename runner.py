@@ -143,10 +143,6 @@ def find_split_ratio(df, fr_nearest_station):
     k = 0
     for fr, ml in fr_nearest_station.items():
         k += 1
-        #     print(df[df['station_id']==fr]['total_flow'])
-        #     print(df[df['station_id']==ml]['total_flow'])
-        #     print(df[df['station_id']==fr]['total_flow'].divide(df[df['station_id']==ml]['total_flow'].values))
-        #     print(df[df['station_id']==ml])
         temp = pd.Series([0] * 48, index=list(range(0, 48)), name='split_ratio')
         # update on half-hour basis
         for i in range(0, 48):
@@ -199,6 +195,10 @@ def get_options():
     optParser = optparse.OptionParser()
     optParser.add_option("--nogui", action="store_true",
                          default=False, help="run the commandline version of sumo")
+    optParser.add_option("--begin_time", action="store",
+                         default=16, help="begin time in count of half hours (e.g. 16 is 8:00 AM)")
+    optParser.add_option("--end_time", action="store",
+                         default=17, help="end time in count of half hours (e.g. 17 is 8:30 AM)")
     options, args = optParser.parse_args()
     return options
 
@@ -211,8 +211,8 @@ if __name__ == "__main__":
     else:
         sumoBinary = checkBinary('sumo-gui')
 
-    begin_time = 16
-    end_time = 18
+    begin_time = options.begin_time
+    end_time = options.end_time
 
     df = pd.read_csv('data/0304.csv', parse_dates=['timestamp']).fillna(0)
     initial = df['timestamp'].iloc[0].value
